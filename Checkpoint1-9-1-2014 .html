@@ -6,6 +6,211 @@
 </head>
 
 <body>
+<script type="text/javascript">
+var player = "O";
+var COLOR = "black";
+var AI = "X";
+var kosong = " ";
+
+var giliran = player;
+var currentColor = COLOR;
+var currentGame;
+var hitungKosong = 9;
+var oCells;
+
+initCurrentGame();
+
+<!--Fungsi untuk menentukan giliran antara player dan AI-->
+function swapTurn(){
+	if(giliran == AI){
+		giliran = player;
+	}else{
+		giliran = AI;
+	}
+}
+
+<!--Fungsi untuk Mengecek tiap-tiap Kotak-->
+function determine(kotak){
+	for(var i = 0 ; i < kotak.length ; i++)
+	{
+		if(kotak[i][0] == kotak[i][1] && kotak[i][1] == kotak[i][2])
+		{
+			if(kotak[i][0] != kosong)
+			{
+				return kotak[i][0];
+			}
+		}
+	}
+	
+	for(var j = 0 ; j < kotak[0].length ; j++)
+	{
+		if(kotak[0][j] == kotak[1][j] && kotak[1][j] == kotak[2][j])
+		{
+			if(kotak[0][j] != kosong)
+			{
+				return kotak[0][j];
+			}
+		}
+	}
+	
+	if((kotak[0][0] == kotak[1][1] && kotak[1][1] == kotak[2][2]) || (kotak[0][2] == kotak[1][1] && kotak[1][1] == kotak[2][0]))
+	{
+		if(kotak[1][1] != kosong)
+		{
+			return kotak[1][1];
+		}
+	}
+	
+	if(hitungKosong == 0)
+	{
+		return "draw";
+	}
+	
+	return "lanjut";
+}
+
+<!--Fungsi untuk matriks yang dibaca oleh AI, AI tidak bisa menentukan matriks jika dalam HTML.-->
+function initCurrentGame()
+{
+	currentGame = new Array(3);
+	for(var i = 0 ; i < currentGame.length ; i++)
+	{
+		currentGame[i] = new Array(3);
+		for(var j = 0 ; j < currentGame[i].length ; j++)
+		{
+				currentGame[i][j] = kosong;
+		}
+	}
+}
+ 
+// fungsi onClick yang akan dipanggil pada HTML, fungsi utama untuk memanggil fungsi-fungsi lainnya.
+// digunakan untuk menulis pada tabel setiap kali player menggunakan giliran.
+function onClick(sender,row,col){
+	if(currentGame[row][col] != kosong){
+		alert("Sudah dipilih!");
+		return;
+	}
+	
+	sender.innerHTML = "<font color='" + currentColor + "'>" + giliran + "</font>";
+	
+	currentGame[row][col] = giliran;
+	
+	hitungKosong--;
+	
+	var winner = determine(currentGame);
+	
+	if(winner != "lanjut")
+		{
+			if(winner == "draw")
+			{
+				alert("Seri!");
+			}
+			else
+			{
+				if(winner == "X")
+				alert("Permainan dimenangkan oleh komputer !!!");
+				else
+				alert("Permainan dimenangkan oleh player !!!");
+			}
+			resetGame();
+			return;
+		}
+		
+	swapTurn();	
+	AITurn();
+	
+	winner = determine(currentGame);
+		if(winner != "lanjut")
+		{
+			if(winner == "draw")
+			{
+				alert("Seri!");
+			}
+			else
+			{
+				if(winner == "X")
+				alert("Permainan dimenangkan oleh komputer !!!");
+				else
+				alert("Permainan dimenangkan oleh player !!!");
+			}
+			resetGame();
+			return;
+		}
+}
+
+// Fungsi untuk AI, mulai dari memetakkan semua kotak yang mungkin, sampe memilih kotak yang paling untung.
+function AITurn(){
+	if(giliran != AI) return;
+	if(hitungKosong == 0) return; 
+	
+	copyBoard();
+	giliranAI = AI;
+	
+	// Algoritma Minimax
+	var res,ci,cj,choose = -1000;
+	
+	for(var i = 0 ; i < kotakAI.length ; i++)
+	{
+		for(var j = 0 ; j < kotakAI[i].length ; j++)
+		{
+			if(kotakAI[i][j] == kosong)
+			{
+				kotakAI[i][j] = giliranAI;
+				hitungKosong--;
+				cekGiliran();
+				kotakAI[i][j] = kosong;
+				hitungKosong++;
+				if(choose == -1000)
+				{
+					choose = res;
+					ci = i;
+					cj = j;
+				}
+				else if(res > choose)
+				{
+					choose = res;
+					ci = i;
+					cj = j;
+				}
+				cekGiliran();
+			}
+		}
+	}
+	// diulang sampai i==9 nilai res yang paling besar,yang dipilih. selama nilai res yang lebih besar tidak ditemukan, koordinat ci,cj tetap.
+	currentGame[ci][cj] = AI;	
+	hitungKosong--;//mengurangi jumlah kotak, setiap fungsi ini dipanggil kotak-1
+	
+	setSign(ci,cj,AI,COLOR); //menampilkan giliran AI, X pada matriks.
+	swapTurn();
+}
+
+//Fungsi untuk mengetahui kotak mana saja yang telah terisi, lalu di copy agar AI tahu langkah mana Saja yang bisa diambil.
+function copyBoard(){
+	for(var i = 0 ; i < kotakAI.length ; i++)
+	{
+		for(var j = 0 ; j < kotakAI[i].length; j++)
+		{
+			kotakAI[i][j] = currentGame[i][j];
+		}
+	}
+}
+
+// Mereset semua kotak yang telah diisi, baik pada HTML maupun Javascript untuk AI.
+function resetGame()
+{
+	hitungKosong = 9;
+	clearBoard();
+	giliran = player;
+	currentColor = COLOR;
+	
+	for(var i = 0 ; i < currentGame.length ; i++){
+		for(var j = 0 ; j < currentGame[i].length ; j++){
+			currentGame[i][j] = kosong;
+		}
+	}	
+}
+
+</script>
 <!--Tabel Buat Permainan, dalam bentuk matriks 3x3. (this, 0,0) sebagai koordinat matriks-->
 <table bgcolor="#000000" cellpadding="5" cellspacing="5">
 	<tr height="50">
