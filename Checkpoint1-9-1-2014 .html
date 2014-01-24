@@ -19,6 +19,8 @@ var hitungKosong = 9;
 var oCells;
 
 initCurrentGame();
+initkotakAI();
+clearBoard();
 
 <!--Fungsi untuk menentukan giliran antara player dan AI-->
 function swapTurn(){
@@ -185,6 +187,7 @@ function AITurn(){
 	swapTurn();
 }
 
+
 //Fungsi untuk mengetahui kotak mana saja yang telah terisi, lalu di copy agar AI tahu langkah mana Saja yang bisa diambil.
 function copyBoard(){
 	for(var i = 0 ; i < kotakAI.length ; i++)
@@ -264,6 +267,31 @@ function search(level)
 	}
 	return choose;
 }
+
+//fungsi buat AI nulis di HTML
+function setSign(row,col,turn,color)
+{
+	var pos = row*3 + col;
+	oCells[pos].innerHTML = "<font color='" + color + "'>" + 
+						turn + "</font>";
+}
+
+//buat ngreset kotak yang HTML
+function clearBoard(){
+	oCells = document.getElementsByName("kotak");
+	for(var i = 0 ; i < oCells.length ; i++){
+		oCells.item(i).innerHTML = "";
+	}
+}	
+
+//Fungsi Untuk mengecek matriks.
+function initkotakAI(){
+	kotakAI = new Array(3);
+	for(var i = 0 ; i < kotakAI.length ; i++){
+		kotakAI[i] = new Array(3);
+	}
+}
+
 
 </script>
 <!--Tabel Buat Permainan, dalam bentuk matriks 3x3. (this, 0,0) sebagai koordinat matriks-->
