@@ -158,6 +158,7 @@ function AITurn(){
 				kotakAI[i][j] = giliranAI;
 				hitungKosong--;
 				cekGiliran();
+				res = search(1);
 				kotakAI[i][j] = kosong;
 				hitungKosong++;
 				if(choose == -1000)
@@ -208,6 +209,60 @@ function resetGame()
 			currentGame[i][j] = kosong;
 		}
 	}	
+}
+
+// player menang jika nilai return -99, AI menang jika nilai 99
+// Fungsi untuk menentukan move mana yang paling baik untuk AI.
+// Nilai "level" dapat diganti dengan nilai skala 1-100. pertimbangan AI, akan mencari nilai terbesar agar menang. jadi jika nilai level besar, AI 
+// akan memilih langkah sedapatnya, sehingga player bisa menang selama masuk dalam skala 1-level
+function search(level)
+{
+	var res = determine(kotakAI);
+	if(res == AI)
+	{
+		return  100-level;
+	}
+	else if(res == player)
+	{
+		return level-100;
+	}
+	else if(res == "draw")
+	{
+		return 0;
+	}
+	
+	var choose = -1000;
+	var temp;
+	
+	for(var i = 0 ; i < kotakAI.length ; i++)
+	{
+		for(var j = 0 ; j < kotakAI[i].length ; j++)
+		{
+			if(kotakAI[i][j] == kosong)
+			{
+				kotakAI[i][j] = giliranAI;
+				cekGiliran();
+				hitungKosong--;
+				temp = search(level + 1);
+				cekGiliran();
+				kotakAI[i][j] = kosong;
+				hitungKosong++;
+				if(choose == -1000)
+				{
+					choose = temp;
+				}
+				else if(giliranAI == AI)
+				{
+					if(temp > choose) choose = temp;
+				}
+				else if(giliranAI == player)
+				{
+					if(temp < choose) choose = temp;
+				}
+			}
+		}
+	}
+	return choose;
 }
 
 </script>
