@@ -31,6 +31,14 @@ function swapTurn(){
 	}
 }
 
+<!--cuman buat ngecek siapa yang jalan,,hehehe ini dibikin biar gampang nanti pas AI mw bkin peta kotak (AI pura2 jadi player)-->
+function cekGiliran(){
+	if(giliranAI == AI)
+		giliranAI = player;
+	else
+		giliranAI = AI;
+}
+
 <!--Fungsi untuk Mengecek tiap-tiap Kotak-->
 function determine(kotak){
 	for(var i = 0 ; i < kotak.length ; i++)
@@ -186,7 +194,6 @@ function AITurn(){
 	setSign(ci,cj,AI,COLOR); //menampilkan giliran AI, X pada matriks.
 	swapTurn();
 }
-
 
 //Fungsi untuk mengetahui kotak mana saja yang telah terisi, lalu di copy agar AI tahu langkah mana Saja yang bisa diambil.
 function copyBoard(){
